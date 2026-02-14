@@ -1,0 +1,13 @@
+# Local terraform directory
+.terraform/
+
+# Local state files
+*.tfstate
+*.tfstate.*
+
+# Sensitive variables
+*.tfvars
+*.tfvars.json
+
+# Log files
+*.log
