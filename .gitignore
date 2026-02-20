@@ -1,13 +1,30 @@
-# Local terraform directory
+# Terraform
 .terraform/
-
-# Local state files
 *.tfstate
 *.tfstate.*
-
-# Sensitive variables
 *.tfvars
 *.tfvars.json
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
 
-# Log files
-*.log
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Node (frontend)
+app/frontend/node_modules/
+app/frontend/dist/
+
+# Python (backend)
+app/backend/__pycache__/
+app/backend/*.pyc
+app/backend/.env

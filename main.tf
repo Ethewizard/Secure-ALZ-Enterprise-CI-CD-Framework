@@ -26,3 +26,22 @@ module "connectivity_layer" {
   depends_on      = [module.management_layer]
 }
 
+# 4. Deploy Milk & Ink Workload (Spoke peered to Hub)
+module "milkink_workload" {
+  source          = "./platform/workloads/milkink"
+  subscription_id = var.subscription_id
+  location        = var.default_location
+  environment     = "production"
+  tags            = merge(var.tags, {
+    Workload = "Milk-Ink-Studio"
+    Owner    = "Elijah-Walker"
+  })
+
+  # Wire to existing platform layers
+  hub_vnet_id                = module.connectivity_layer.hub_vnet_id
+  hub_vnet_name              = module.connectivity_layer.hub_vnet_name
+  hub_rg_name                = "rg-connectivity-${var.default_location}"
+  log_analytics_workspace_id = module.management_layer.log_analytics_workspace_id
+
+  depends_on = [module.connectivity_layer]
+}
