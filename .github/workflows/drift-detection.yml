@@ -1,0 +1,67 @@
+# ═══════════════════════════════════════════════════════════════
+# DRIFT DETECTION — Nightly scan for ClickOps changes
+# Runs terraform plan and alerts if infrastructure has drifted
+# ═══════════════════════════════════════════════════════════════
+name: "Drift Detection"
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # 6 AM UTC daily (midnight CST)
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  id-token: write
+  contents: read
+  issues: write
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_USE_OIDC: true
+
+jobs:
+  drift:
+    name: Detect Drift
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.12.0"
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan (Drift Check)
+        id: plan
+        run: terraform plan -detailed-exitcode -no-color 2>&1 | tee plan_output.txt
+        continue-on-error: true
+
+      # Exit code 0 = no changes, 1 = error, 2 = drift detected
+      - name: Create Drift Alert Issue
+        if: steps.plan.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('plan_output.txt', 'utf8');
+            const truncated = plan.length > 60000 ? plan.substring(0, 60000) + '\n... (truncated)' : plan;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Infrastructure Drift Detected — ${new Date().toISOString().split('T')[0]}`,
+              body: `## Drift Detection Report\n\nManual changes (ClickOps) were detected in the Azure environment.\n\n\`\`\`\n${truncated}\n\`\`\`\n\n**Action Required:** Review and either:\n1. Revert manual changes in Azure Portal\n2. Update Terraform code to match desired state and run \`terraform apply\``,
+              labels: ['drift', 'infrastructure']
+            });
+
+      - name: Status
+        run: |
+          if [ "${{ steps.plan.outcome }}" == "success" ]; then
+            echo "✅ No drift detected. Infrastructure matches Terraform state."
+          else
+            echo "🚨 Drift detected or plan error. See GitHub Issues."
+          fi
