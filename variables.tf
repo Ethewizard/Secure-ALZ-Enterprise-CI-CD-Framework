@@ -22,8 +22,8 @@ variable "subscription_id" {
 }
 
 variable "tags" {
-  type        = map(string)
-  default     = {
+  type = map(string)
+  default = {
     Project   = "Azure Landing Zone"
     ManagedBy = "Terraform"
     Owner     = "Cloud-Team"
@@ -32,9 +32,9 @@ variable "tags" {
 variable "parent_resource_id" {
   type        = string
   description = "The ID of the parent resource"
-  }
+}
 
 variable "tenant_id" {
-  type        = string
+  type = string
 
-  }
+}
