@@ -47,8 +47,5 @@ jobs:
       - name: Pre-deploy checks
         run: bash scripts/pre-deploy-check.sh
 
-      - name: Terraform Init
-        run: terraform init
-
       - name: Terraform Apply
         run: terraform apply -auto-approve -parallelism=50
