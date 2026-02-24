@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.14"
+  required_version = ">= 1.14.5"
 
   required_providers {
     # 1. The standard Azure Resource Manager provider
