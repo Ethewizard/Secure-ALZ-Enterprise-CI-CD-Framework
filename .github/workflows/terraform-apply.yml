@@ -22,12 +22,16 @@ env:
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   ARM_USE_OIDC: true
+  TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+  TF_VAR_parent_resource_id: ${{ secrets.PARENT_RESOURCE_ID }}
 
 jobs:
   apply:
     name: Terraform Apply
     runs-on: ubuntu-latest
     environment: production
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -44,8 +48,4 @@ jobs:
         run: terraform init
 
       - name: Terraform Apply
-        run: |
-          terraform apply -auto-approve \
-            -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-            -var="tenant_id=${{ secrets.AZURE_TENANT_ID }}" \
-            -var="parent_resource_id=${{ secrets.PARENT_RESOURCE_ID }}"
+        run: terraform apply -auto-approve
