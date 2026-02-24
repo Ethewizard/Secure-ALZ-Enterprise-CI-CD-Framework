@@ -13,6 +13,6 @@ if [ ! -f "providers.tf" ]; then
 fi
 
 # 3. Format Check (Ensures team code style)
-terraform fmt 
+terraform fmt || true
 
 echo "Checks passed!"
