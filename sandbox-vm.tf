@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════
-# SANDBOX VM — testing pipelines Production
+# SANDBOX VM — testing pipelines Production TEST!1
 # ═══════════════════════════════════════════════════════════════
 
 # ── Resource Group ────────────────────────────────────────────
@@ -63,7 +63,3 @@ resource "azurerm_linux_virtual_machine" "sandbox" {
     version   = "latest"
   }
 }
-
-
-
-
