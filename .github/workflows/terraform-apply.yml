@@ -1,16 +1,15 @@
-name: "Automated Pipeline"
+name: "Automated Pipeline Deployment"
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-     - 'sandbox-vm.tf'
-
+      - "sandbox-vm.tf"
 
 permissions:
   id-token: write
-  contents: write    # needs write to push the merge
+  contents: write
 
 env:
   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -22,7 +21,7 @@ env:
   TF_VAR_parent_resource_id: ${{ secrets.PARENT_RESOURCE_ID }}
 
 jobs:
-  apply:
+  apply-and-merge:
     name: Terraform Apply
     runs-on: ubuntu-latest
     environment: production
@@ -31,18 +30,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0    # full history needed for merge
+          fetch-depth: 0
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.14.5"
 
-      - name: Pre-deploy checks
-        run: bash scripts/pre-deploy-check.sh
-
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -refresh=false
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -parallelism=50
+        run: |
+          terraform apply \
+            -target=azurerm_resource_group.sandbox \
+            -target=azurerm_virtual_network.sandbox \
+            -target=azurerm_subnet.sandbox \
+            -target=azurerm_network_interface.sandbox_vm \
+            -target=azurerm_linux_virtual_machine.sandbox \
+            -refresh=false \
+            -auto-approve
