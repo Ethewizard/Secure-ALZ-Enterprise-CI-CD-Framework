@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════
-# SANDBOX VM — testing pipelines, scripts, etc. in a safe environment before deploying to production.
+# SANDBOX VM — testing pipelines
 # ═══════════════════════════════════════════════════════════════
 
 # ── Resource Group ────────────────────────────────────────────
@@ -63,3 +63,5 @@ resource "azurerm_linux_virtual_machine" "sandbox" {
     version   = "latest"
   }
 }
+
+
