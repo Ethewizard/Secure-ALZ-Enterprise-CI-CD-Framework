@@ -2,12 +2,14 @@
 # SANDBOX VM — testing pipelines Production TEST!1
 # ═══════════════════════════════════════════════════════════════
 
+
 # ── Resource Group ────────────────────────────────────────────
 resource "azurerm_resource_group" "sandbox" {
   name     = "rg-sandbox-${var.default_location}"
   location = var.default_location
   tags     = merge(var.tags, { Environment = "Sandbox" })
 }
+
 
 # ── VNet & Subnet ─────────────────────────────────────────────
 resource "azurerm_virtual_network" "sandbox" {
@@ -25,6 +27,7 @@ resource "azurerm_subnet" "sandbox" {
   address_prefixes     = ["10.200.1.0/24"]
 }
 
+
 # ── NIC ───────────────────────────────────────────────────────
 resource "azurerm_network_interface" "sandbox_vm" {
   name                = "nic-sandbox-vm"
@@ -38,6 +41,7 @@ resource "azurerm_network_interface" "sandbox_vm" {
     private_ip_address_allocation = "Dynamic"
   }
 }
+
 
 # ── VM ────────────────────────────────────────────────────────
 resource "azurerm_linux_virtual_machine" "sandbox" {
@@ -63,3 +67,5 @@ resource "azurerm_linux_virtual_machine" "sandbox" {
     version   = "latest"
   }
 }
+
+
