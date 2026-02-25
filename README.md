@@ -24,7 +24,6 @@ The landing zone follows a **Platform vs. Workload** separation, even within a s
 1. **Identity & Governance:** A Management Group hierarchy that organizes resources and enforces global security policies.
 2. **Connectivity (Hub & Spoke):** A central "Hub" Virtual Network (10.100.0.0/16) containing shared services like Azure Firewall and VPN Gateways.
 3. **Management:** A centralized Log Analytics Workspace for unified auditing, monitoring, and SIEM (Sentinel) integration.
-4. **Workloads:** Application spokes (e.g., Milk & Ink Studio at 10.101.0.0/16) peered to the hub with isolated networking.
 
 ---
 
