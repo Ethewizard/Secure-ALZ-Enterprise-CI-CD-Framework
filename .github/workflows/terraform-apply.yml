@@ -1,12 +1,11 @@
-name: "Terraform Apply & Merge to Main"
+name: "Automated Pipeline"
 
 on:
   workflow_dispatch:
   push:
-    branches: [master]
+    branches: [main]
     paths:
-      - '**.tf'
-      - '**.tfvars'
+     - 'sandbox-vm.tf'
 
 
 permissions:
@@ -23,8 +22,8 @@ env:
   TF_VAR_parent_resource_id: ${{ secrets.PARENT_RESOURCE_ID }}
 
 jobs:
-  apply-and-merge:
-    name: Terraform Apply & Merge
+  apply:
+    name: Terraform Apply
     runs-on: ubuntu-latest
     environment: production
     timeout-minutes: 60
@@ -47,11 +46,3 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -parallelism=50
-
-      - name: Merge master into main
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout main
-          git merge master --no-ff -m "Auto-merge master into main after successful deploy"
-          git push origin main
