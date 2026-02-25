@@ -1,0 +1,50 @@
+# ═══════════════════════════════════════════════════════════════
+# DEPLOY SANDBOX VM — Triggers on push to main
+# Targets only sandbox module, skips ALZ refresh
+# ═══════════════════════════════════════════════════════════════
+name: "Deploy Sandbox VM"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'platform/sandbox/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ARM_CLIENT_ID:       ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_TENANT_ID:       ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_USE_OIDC:        true
+  TF_VAR_subscription_id:    ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  TF_VAR_tenant_id:          ${{ secrets.AZURE_TENANT_ID }}
+  TF_VAR_parent_resource_id: ${{ secrets.PARENT_RESOURCE_ID }}
+
+jobs:
+  deploy-sandbox:
+    name: Deploy Sandbox VM
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.5"
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply (sandbox only)
+        run: |
+          terraform apply \
+            -target=module.sandbox \
+            -refresh=false \
+            -auto-approve

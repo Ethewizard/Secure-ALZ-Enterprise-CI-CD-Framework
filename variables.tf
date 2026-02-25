@@ -29,6 +29,7 @@ variable "tags" {
     Owner     = "Cloud-Team"
   }
 }
+
 variable "parent_resource_id" {
   type        = string
   description = "The ID of the parent resource"
@@ -36,6 +37,10 @@ variable "parent_resource_id" {
 
 variable "tenant_id" {
   type = string
-
 }
 
+variable "sandbox_vm_password" {
+  type        = string
+  description = "Admin password for the sandbox VM"
+  sensitive   = true
+}
