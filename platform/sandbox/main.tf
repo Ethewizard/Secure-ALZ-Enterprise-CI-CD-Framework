@@ -46,7 +46,7 @@ resource "azurerm_linux_virtual_machine" "sandbox" {
   name                            = "vm-sandbox-test"
   location                        = var.default_location
   resource_group_name             = azurerm_resource_group.sandbox.name
-  size                            = "Standard_DS1_v2"
+  size                            = "Standard_D2s_v3"
   admin_username                  = "azureuser"
   disable_password_authentication = false
   admin_password                  = var.admin_password
